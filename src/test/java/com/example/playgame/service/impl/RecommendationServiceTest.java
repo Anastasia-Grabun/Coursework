@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class RecommendationServiceTest {
+
     @Mock
     private GameRepository gameRepository;
 
@@ -39,16 +40,21 @@ public class RecommendationServiceTest {
     @Mock
     private GameDtoMapper gameDtoMapper;
 
+    @Mock
+    private AuthServiceImpl authService;
+
     @InjectMocks
     private RecommendationServiceImpl recommendationService;
 
     private Long accountId;
     private Game game;
     private GameShortcutResponseDto gameShortcutResponseDto;
+    private String authHeader;
 
     @BeforeEach
     public void setUp() {
         accountId = 1L;
+        authHeader = "Bearer mock-token";
 
         game = new Game();
         game.setId(1L);
@@ -61,11 +67,10 @@ public class RecommendationServiceTest {
     }
 
     @Test
-    public void testGetRecommendationsForUser_Success() {
+    public void testGetRecommendations_Success() {
+        when(authService.extractAccountId(authHeader)).thenReturn(accountId);
         when(genreRepository.countFavouriteGenresByAccountId(accountId)).thenReturn(3);
-
         doNothing().when(favouriteGenresService).updateFavouriteGenres(accountId);
-
         when(genreRepository.findFavouriteGenresByAccountId(accountId)).thenReturn(Collections.singletonList(1L));
 
         Genre genre = new Genre();
@@ -77,17 +82,18 @@ public class RecommendationServiceTest {
         when(gameRepository.findTopRatedGames(any(Pageable.class))).thenReturn(gamePage);
         when(gameDtoMapper.gameToGameShortcutResponseDto(game)).thenReturn(gameShortcutResponseDto);
 
-        List<GameShortcutResponseDto> result = recommendationService.getRecommendationsForUser (accountId, 10, 0);
+        List<GameShortcutResponseDto> result = recommendationService.getRecommendations(authHeader, 10, 0);
 
         assertEquals(1, result.size());
         assertEquals(gameShortcutResponseDto, result.get(0));
     }
 
     @Test
-    public void testGetRecommendationsForUser_InsufficientGenres() {
+    public void testGetRecommendations_InsufficientGenres() {
+        when(authService.extractAccountId(authHeader)).thenReturn(accountId);
         when(genreRepository.countFavouriteGenresByAccountId(accountId)).thenReturn(2);
 
-        assertThrows(IllegalArgumentException.class, () -> recommendationService.getRecommendationsForUser (accountId, 10, 0));
+        assertThrows(IllegalArgumentException.class, () -> recommendationService.getRecommendations(authHeader, 10, 0));
     }
 
     @Test

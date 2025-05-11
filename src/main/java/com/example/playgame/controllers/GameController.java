@@ -23,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/games")
 public class GameController {
+    
     private final GameService gameService;
 
     @GetMapping("/{id}")
@@ -130,4 +131,5 @@ public class GameController {
             @RequestParam BigDecimal rating) {
         gameService.addRating(gameId, accountId, rating);
     }
+
 }

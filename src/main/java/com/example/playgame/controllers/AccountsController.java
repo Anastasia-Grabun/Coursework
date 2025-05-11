@@ -70,12 +70,13 @@ public class AccountsController {
     }
 
     @PreAuthorize("hasRole('USER')")
-    @PostMapping("/{accountId}/recommendations")
-    public List<GameShortcutResponseDto> getRecommendationsForUser (
-            @PathVariable Long accountId,
+    @PostMapping("/recommendations")
+    public List<GameShortcutResponseDto> getRecommendationsForUser(
+            @RequestHeader("Authorization") String authHeader,
             @RequestParam(defaultValue = "10") Integer limit,
             @RequestParam(defaultValue = "0") Integer page) {
-        return recommendationService.getRecommendationsForUser(accountId, limit, page);
+
+        return recommendationService.getRecommendations(authHeader, limit, page);
     }
 
     @PreAuthorize("hasRole('USER')")
