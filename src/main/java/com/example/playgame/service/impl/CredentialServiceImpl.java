@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -81,6 +82,7 @@ public class CredentialServiceImpl implements CredentialService {
     }
 
     @Override
+    @Transactional
     public List<CredentialResponseByRoleDto> getCredentialsWithRole(Long roleId, int page, int size){
         Role role = roleRepository.findById(roleId)
                 .orElseThrow(()-> new RoleNotFoundException(roleId));

@@ -79,11 +79,11 @@ public class AccountsController {
     }
 
     @PreAuthorize("hasRole('USER')")
-    @PostMapping("/{accountId}/favourites")
-    public void addToFavouritesForNewAccount(
-            @PathVariable Long accountId,
+    @PostMapping("/favourites")
+    public void addToFavouritesFromToken(
+            @RequestHeader("Authorization") String authHeader,
             @RequestBody List<Long> genreIds) {
-        favouriteGenreService.addToFavouritesForNewAccount(accountId, genreIds);
+        favouriteGenreService.addToFavouritesUsingToken(authHeader, genreIds);
     }
 }
 

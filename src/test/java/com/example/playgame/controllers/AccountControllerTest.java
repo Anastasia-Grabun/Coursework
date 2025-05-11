@@ -127,10 +127,14 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void testAddToFavouritesForNewAccount_Success() {
-        List<Long> genreIds = Collections.singletonList(1L);
-        accountsController.addToFavouritesForNewAccount(1L, genreIds);
+    public void testAddToFavouritesFromToken_Success() {
+        String token = "Bearer mock-jwt-token";
+        List<Long> genreIds = List.of(1L, 2L);
 
-        verify(favouriteGenreService, times(1)).addToFavouritesForNewAccount(1L, genreIds);
+        accountsController.addToFavouritesFromToken(token, genreIds);
+
+        verify(favouriteGenreService, times(1))
+                .addToFavouritesUsingToken(token, genreIds);
     }
+
 }
